@@ -1,19 +1,23 @@
 import json
-import os
+from pathlib import Path
+
 import streamlit as st
 
-DATA_FILE = "todos.json"
+DATA_FILE = Path(__file__).resolve().with_name("todos.json")
 
 
 def load_todos():
-    if os.path.exists(DATA_FILE):
-        with open(DATA_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
+    if not DATA_FILE.exists():
+        return []
+
+    with DATA_FILE.open("r", encoding="utf-8") as f:
+        todos = json.load(f)
+
+    return todos if isinstance(todos, list) else []
 
 
 def save_todos(todos):
-    with open(DATA_FILE, "w", encoding="utf-8") as f:
+    with DATA_FILE.open("w", encoding="utf-8") as f:
         json.dump(todos, f, ensure_ascii=False, indent=2)
 
 
