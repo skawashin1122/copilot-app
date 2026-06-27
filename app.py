@@ -24,12 +24,14 @@ def main():
         st.session_state.todos = load_todos()
 
     # --- タスク入力 ---
-    new_task = st.text_input("新しいタスクを入力してください", key="new_task_input")
-    if st.button("追加"):
+    with st.form("add_task_form", clear_on_submit=True):
+        new_task = st.text_input("新しいタスクを入力してください", key="new_task_input")
+        submitted = st.form_submit_button("追加")
+
+    if submitted:
         task = new_task.strip()
         if task:
             st.session_state.todos.append({"text": task, "done": False})
-            st.session_state.new_task_input = ""
             save_todos(st.session_state.todos)
             st.rerun()
 
