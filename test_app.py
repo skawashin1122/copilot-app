@@ -120,6 +120,50 @@ def test_file_format():
     print("[PASS] test_file_format passed")
 
 
+def test_get_filtered_todos_all():
+    """Test that all todos are returned when filter is 'すべて'"""
+    todos = [
+        {"text": "Task 1", "done": False},
+        {"text": "Task 2", "done": True},
+        {"text": "Task 3", "done": False},
+    ]
+    from app import get_filtered_todos
+
+    filtered = get_filtered_todos(todos, "すべて")
+    assert filtered == list(enumerate(todos)), f"Expected all todos, got {filtered}"
+    print("[PASS] test_get_filtered_todos_all passed")
+
+
+def test_get_filtered_todos_incomplete():
+    """Test that only incomplete todos are returned"""
+    todos = [
+        {"text": "Task 1", "done": False},
+        {"text": "Task 2", "done": True},
+        {"text": "Task 3", "done": False},
+    ]
+    from app import get_filtered_todos
+
+    filtered = get_filtered_todos(todos, "未完了")
+    expected = [(0, todos[0]), (2, todos[2])]
+    assert filtered == expected, f"Expected {expected}, got {filtered}"
+    print("[PASS] test_get_filtered_todos_incomplete passed")
+
+
+def test_get_filtered_todos_completed():
+    """Test that only completed todos are returned"""
+    todos = [
+        {"text": "Task 1", "done": False},
+        {"text": "Task 2", "done": True},
+        {"text": "Task 3", "done": False},
+    ]
+    from app import get_filtered_todos
+
+    filtered = get_filtered_todos(todos, "完了")
+    expected = [(1, todos[1])]
+    assert filtered == expected, f"Expected {expected}, got {filtered}"
+    print("[PASS] test_get_filtered_todos_completed passed")
+
+
 if __name__ == "__main__":
     # Clean up before running tests
     if os.path.exists("todos.json"):
@@ -131,6 +175,9 @@ if __name__ == "__main__":
         test_save_preserves_unicode()
         test_file_is_created()
         test_file_format()
+        test_get_filtered_todos_all()
+        test_get_filtered_todos_incomplete()
+        test_get_filtered_todos_completed()
         
         print("\n[SUCCESS] All tests passed!")
         

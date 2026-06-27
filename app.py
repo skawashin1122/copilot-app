@@ -4,6 +4,7 @@ from pathlib import Path
 import streamlit as st
 
 DATA_FILE = Path(__file__).resolve().with_name("todos.json")
+FILTER_OPTIONS = ("すべて", "未完了", "完了")
 
 
 def load_todos():
@@ -19,6 +20,14 @@ def load_todos():
 def save_todos(todos):
     with DATA_FILE.open("w", encoding="utf-8") as f:
         json.dump(todos, f, ensure_ascii=False, indent=2)
+
+
+def get_filtered_todos(todos, filter_option):
+    if filter_option == "未完了":
+        return [(i, todo) for i, todo in enumerate(todos) if not todo["done"]]
+    if filter_option == "完了":
+        return [(i, todo) for i, todo in enumerate(todos) if todo["done"]]
+    return list(enumerate(todos))
 
 
 def main():
@@ -40,19 +49,12 @@ def main():
             st.rerun()
 
     # --- フィルター ---
-    filter_option = st.radio(
-        "表示フィルター", ["すべて", "未完了", "完了"], horizontal=True
-    )
+    filter_option = st.radio("表示フィルター", FILTER_OPTIONS, horizontal=True)
 
     # --- タスク一覧 ---
     st.divider()
     todos = st.session_state.todos
-    for i, todo in enumerate(todos):
-        if filter_option == "未完了" and todo["done"]:
-            continue
-        if filter_option == "完了" and not todo["done"]:
-            continue
-
+    for i, todo in get_filtered_todos(todos, filter_option):
         col1, col2 = st.columns([10, 1])
         label = f"~~{todo['text']}~~" if todo["done"] else todo["text"]
         with col1:
