@@ -29,6 +29,7 @@ def main():
         task = new_task.strip()
         if task:
             st.session_state.todos.append({"text": task, "done": False})
+            st.session_state.new_task_input = ""
             save_todos(st.session_state.todos)
             st.rerun()
 
